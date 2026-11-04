@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
-function LoginPage() {
+function AccountPage({ isRegistration = false }) {
   const [message, setMessage] = useState('');
 
   function handleSubmit(event) {
@@ -10,7 +10,7 @@ function LoginPage() {
     // The browser checks required fields and email format before submission.
     // Credentials are never sent, logged, or persisted.
     event.currentTarget.reset();
-    setMessage('Backend integration pending.');
+    setMessage(isRegistration ? 'Backend integration pending' : 'Backend integration pending.');
   }
 
   return (
@@ -28,11 +28,23 @@ function LoginPage() {
             <h2>A little island.<br />A generous pantry.</h2>
           </div>
         </aside>
-        <section className="account-form" aria-labelledby="login-title">
+        <section className={isRegistration ? "account-form register-form" : "account-form"} aria-labelledby="account-title">
           <p className="eyebrow">YOUR PANTRY ACCOUNT</p>
-          <h1 id="login-title">Welcome back</h1>
-          <p className="intro">Log in to shop and track your orders.</p>
-          <form onSubmit={handleSubmit} onInput={() => setMessage('')}>
+          <h1 id="account-title">{isRegistration ? 'Create an account' : 'Welcome back'}</h1>
+          <p className="intro">{isRegistration ? 'Keep your orders and delivery details in one place.' : 'Log in to shop and track your orders.'}</p>
+          <form onSubmit={handleSubmit} onInput={() => setMessage('')}
+            onInvalid={isRegistration ? (event) => setMessage(event.target.validationMessage) : undefined}>
+            {isRegistration && (
+              <div className="field">
+                <label htmlFor="full-name">Full name</label>
+                <input id="full-name" name="fullName" type="text" autoComplete="name"
+                  placeholder="Your full name" required pattern=".*\S.*" title="Please enter your full name."
+                  onInput={(event) => {
+                    event.currentTarget.setCustomValidity(event.currentTarget.value.trim()
+                      ? '' : 'Please enter your full name.');
+                  }} />
+              </div>
+            )}
             <div className="field">
               <label htmlFor="email">Email address</label>
               <input id="email" name="email" type="email" autoComplete="email"
@@ -40,16 +52,13 @@ function LoginPage() {
             </div>
             <div className="field">
               <label htmlFor="password">Password</label>
-              <input id="password" name="password" type="password" autoComplete="current-password"
-                placeholder="Enter your password" required />
+              <input id="password" name="password" type="password" autoComplete={isRegistration ? 'new-password' : 'current-password'}
+                placeholder={isRegistration ? 'Create a password' : 'Enter your password'} required />
             </div>
-            <button className="login-button" type="submit">Log in</button>
+            <button className="login-button" type="submit">{isRegistration ? 'Create account' : 'Log in'}</button>
           </form>
-          <p className="registration">New to Ceylon Pantry?{' '}
-            <a href="#registration-status" onClick={(event) => {
-              event.preventDefault();
-              setMessage('Registration is coming soon.');
-            }}>Create an account</a>
+          <p className="registration">{isRegistration ? 'Already have an account?' : 'New to Ceylon Pantry?'}{' '}
+            <a href={isRegistration ? '/login' : '/register'}>{isRegistration ? 'Log in' : 'Create an account'}</a>
           </p>
           <p className="status" id="registration-status" role="status">{message}</p>
         </section>
@@ -58,5 +67,7 @@ function LoginPage() {
   );
 }
 
-// Vite serves this entry for both / and /login. No registration route is created.
-createRoot(document.getElementById('root')).render(<LoginPage />);
+// Regular links and Vite's HTML fallback support direct loads and refreshes.
+const isRegistration = window.location.pathname.replace(/\/$/, '') === '/register';
+document.title = `${isRegistration ? 'Buyer registration' : 'Buyer login'} · Ceylon Pantry`;
+createRoot(document.getElementById('root')).render(<AccountPage isRegistration={isRegistration} />);
