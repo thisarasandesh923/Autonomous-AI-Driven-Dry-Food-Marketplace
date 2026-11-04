@@ -1,0 +1,96 @@
+@font-face {
+  font-family: 'DM Serif Display';
+  src: url('/assets/dm-serif-display.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('/assets/inter-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('/assets/inter-semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+:root {
+  font-family: Inter, sans-serif;
+  color: #2b211b;
+  background: #faf7f0;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+p, h1, h2 { margin: 0; }
+.masthead {
+  height: 94px;
+  padding: 0 max(32px, calc((100vw - 1316px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fefcf8;
+}
+.brand { font-family: 'DM Serif Display', serif; font-size: 34px; color: #a0522d; line-height: 47px; }
+.account-caption { font-size: 12px; font-weight: 600; color: #71645c; margin-right: 33px; }
+.login-layout {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 39px 60px 62px;
+  display: grid;
+  grid-template-columns: 613fr 569fr;
+  column-gap: 138px;
+  min-height: 866px;
+}
+.editorial { background: #a0522d; height: 765px; }
+.food-photo { width: 100%; height: 499px; object-fit: cover; display: block; }
+.editorial-copy { padding: 36px 34px 40px; }
+.island-caption { font-size: 12px; font-weight: 600; line-height: 15px; color: #c9932e; margin-left: 2px; }
+.island-caption span { margin: 0 14px; }
+.editorial h2 { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 66px; font-weight: 400; color: #faf7f0; margin-top: 28px; }
+.account-form { margin-top: 102px; padding-right: 13px; max-width: 510px; }
+.eyebrow { margin: 3px 0 0 2px; font-size: 12px; font-weight: 600; line-height: 15px; color: #a0522d; }
+h1 { font-family: 'DM Serif Display', serif; font-size: 53px; line-height: 73px; font-weight: 400; margin-top: 17px; }
+.intro { font-size: 17px; line-height: 21px; color: #71645c; margin: 8px 0 0 2px; }
+form { margin: 47px 0 0 2px; }
+.field + .field { margin-top: 21px; }
+label { display: block; font-size: 15px; line-height: 18px; font-weight: 600; margin-bottom: 11px; }
+input { width: 100%; height: 53px; border: 1px solid #e4ddd3; border-radius: 6px; background: #fefcf8; color: #2b211b; padding: 0 15px; font: 400 16px Inter, sans-serif; }
+input::placeholder { color: #71645c; opacity: 1; }
+.login-button { width: 100%; height: 54px; margin-top: 24px; border: 0; border-radius: 6px; background: #a0522d; color: #fefcf8; font: 600 17px Inter, sans-serif; cursor: pointer; }
+.login-button:hover { background: #884525; }
+a { color: #a0522d; font-weight: 600; text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid #885f13; outline-offset: 4px; }
+.registration { margin: 32px 0 0 2px; color: #71645c; font-size: 16px; line-height: 19px; }
+.registration a { margin-left: 4px; display: inline-block; }
+.status { margin: 20px 0 0 2px; font-size: 15px; line-height: 22px; color: #a0522d; min-height: 22px; }
+@media (max-width: 1199px) {
+  .login-layout { padding: 36px 32px 48px; gap: 64px; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 94px); }
+  .editorial { height: auto; }
+  .food-photo { height: auto; aspect-ratio: 613 / 499; }
+  .editorial-copy { padding: 30px 24px 40px; }
+  .editorial h2 { font-size: clamp(30px, 3.34vw, 48px); line-height: 1.375; }
+  .account-form { margin-top: 64px; padding-right: 0; }
+  h1 { font-size: 46px; line-height: 1.38; }
+  .registration { line-height: 26px; }
+}
+@media (max-width: 760px) {
+  .masthead { height: 80px; padding: 0 24px; gap: 16px; }
+  .brand { font-size: 27px; line-height: 38px; }
+  .account-caption { margin: 0; font-size: 10px; }
+  .login-layout { display: flex; flex-direction: column; padding: 28px 24px 36px; gap: 36px; }
+  .account-form { margin: 0; max-width: none; }
+  h1 { font-size: 44px; }
+  .intro { font-size: 16px; }
+  form { margin-top: 32px; }
+  .editorial-copy { padding: 26px 24px 32px; }
+  .editorial h2 { font-size: 36px; margin-top: 20px; }
+  .food-photo { max-height: 360px; }
+  .registration a { margin-left: 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .login-button { transition: background-color 150ms ease; }
+}
