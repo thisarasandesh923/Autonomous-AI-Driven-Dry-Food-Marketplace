@@ -1,5 +1,6 @@
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from app.core.dependencies import get_current_user
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -7,9 +8,12 @@ from sqlalchemy.orm import Session
 
 from app.db.database import engine
 from app.models.user import User
-from app.schemas.user import UserRegister
-from app.core.security import hash_password
-
+from app.schemas.user import UserRegister, UserLogin
+from app.core.security import (
+    hash_password,
+    verify_password,
+    create_access_token
+)
 
 
 router = APIRouter(
@@ -65,3 +69,48 @@ def register_user(data: UserRegister):
                 "role": new_user.role
             }
         }
+
+
+@router.post("/login")
+def login_user(data: UserLogin):
+
+    email = str(data.email).lower()
+
+    with Session(engine) as session:
+
+        # Find user by email
+        user = session.scalar(
+            select(User).where(User.email == email)
+        )
+
+        # Check email and password
+        if not user or not verify_password(
+            data.password, user.hashed_password
+        ):
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid email or password",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+
+        # Generate JWT token
+        access_token = create_access_token(user.id)
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "role": user.role
+            }
+        }
+
+#user_protect
+
+@router.get("/me")
+def get_my_profile(
+    current_user: dict = Depends(get_current_user)
+):
+    return current_user

@@ -11,3 +11,8 @@ class UserRegister(BaseModel):
     password: str = Field(min_length=8, max_length=128)
 
     role: Literal["buyer", "seller"]
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
