@@ -35,11 +35,12 @@ for (const role of ['buyer', 'seller']) {
     await page.getByLabel('Password', { exact: true }).fill(password)
     await page.getByRole('button', { name: 'Log in', exact: true }).click()
     await expect(page).toHaveURL(new RegExp(`/${role}/dashboard$`))
-    await expect(
-      page.getByText(
-        `Welcome to ${role === 'buyer' ? 'Buyer' : 'Seller'} Dashboard!`,
-      ),
-    ).toBeVisible()
+    if (role === 'seller')
+      await expect(
+        page.getByRole('heading', { name: 'Inventory' }),
+      ).toBeVisible()
+    else
+      await expect(page.getByText('Welcome to Buyer Dashboard!')).toBeVisible()
     const protectedRequest = requests.find(
       (request) => request.path === `/${role}/dashboard`,
     )

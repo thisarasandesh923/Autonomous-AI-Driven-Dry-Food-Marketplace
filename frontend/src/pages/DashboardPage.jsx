@@ -3,6 +3,7 @@ import { useAuth } from '../features/auth/AuthContext'
 import { AuthLayout } from '../layouts/AuthLayout'
 import { Button } from '../components/ui/Button'
 import { FormNotice } from '../components/ui/FormNotice'
+import { Link } from '../components/Link'
 export function DashboardPage() {
   const { user, get, logout } = useAuth()
   const [data, setData] = useState(null)
@@ -39,6 +40,9 @@ export function DashboardPage() {
             Try again
           </Button>
         )}
+        <Link className="font-semibold text-primary underline" href="/products">
+          Browse the pantry →
+        </Link>
         <Button onClick={logout}>Log out</Button>
       </div>
     </AuthLayout>

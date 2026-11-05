@@ -60,7 +60,9 @@ describe('application authentication integration (mock HTTP)', () => {
         target: { value: 'TestPassword123!' },
       })
       fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
-      await screen.findByText(`Welcome to ${role} dashboard`)
+      if (role === 'seller')
+        await screen.findByRole('heading', { name: 'Inventory' })
+      else await screen.findByText(`Welcome to ${role} dashboard`)
       expect(window.location.pathname).toBe(`/${role}/dashboard`)
       expect(
         calls.find((call) => call.path === `/${role}/dashboard`).headers
@@ -73,7 +75,9 @@ describe('application authentication integration (mock HTTP)', () => {
         `/${role === 'buyer' ? 'seller' : 'buyer'}/dashboard`,
       )
       render(<App />)
-      await screen.findByText(`Welcome to ${role} dashboard`)
+      if (role === 'seller')
+        await screen.findByRole('heading', { name: 'Inventory' })
+      else await screen.findByText(`Welcome to ${role} dashboard`)
       await waitFor(() =>
         expect(window.location.pathname).toBe(`/${role}/dashboard`),
       )

@@ -1,5 +1,15 @@
 # DryLeaf application integration
 
+> Frontend-only development is now the active workflow. Use
+> [frontend/README.md](frontend/README.md) for API-free previews and
+> [frontend/API_CONTRACTS.md](frontend/API_CONTRACTS.md) for future integration.
+> The backend instructions below are historical, not prerequisites for UI preview.
+
+The marketplace screens and additive catalogue API are now implemented. See
+[MARKETPLACE.md](MARKETPLACE.md) for current routes, schema migration, run commands,
+demo isolation, contracts, and verification. The sections below document the
+original authentication integration and its historical verification results.
+
 The existing `integration/auth-frontend` branch already contains both Git merges.
 The login and registration UI, artwork, typography, colors, and responsive styles
 are retained. There were no dashboard pages or React Router dependency in this
