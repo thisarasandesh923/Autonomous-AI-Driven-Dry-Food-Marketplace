@@ -60,9 +60,16 @@ for (const viewport of [
   })
 }
 
-test('registration keyboard flow, honest integration state and native navigation', async ({
+test('registration keyboard flow, API errors and native navigation', async ({
   page,
 }) => {
+  await page.route('**/auth/register', (route) =>
+    route.fulfill({
+      status: 409,
+      contentType: 'application/json',
+      body: JSON.stringify({ detail: 'Email already registered' }),
+    }),
+  )
   const requests = []
   page.on('request', (request) => {
     if (
@@ -105,12 +112,9 @@ test('registration keyboard flow, honest integration state and native navigation
     'type',
     'password',
   )
-  await page.keyboard.press('Tab')
-  await page.keyboard.press('Enter')
-  await expect(page.getByRole('status')).toHaveText(
-    'Account registration is not available yet. Your details have not been sent.',
-  )
-  expect(requests).toEqual([])
+  await page.getByRole('button', { name: 'Create account' }).click()
+  await expect(page.getByRole('status')).toHaveText('Email already registered')
+  expect(requests).toHaveLength(1)
   expect(
     await page.evaluate(() => ({
       local: localStorage.length,

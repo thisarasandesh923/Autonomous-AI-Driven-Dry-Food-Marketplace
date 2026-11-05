@@ -22,10 +22,20 @@ export function validateLogin({ email, password }) {
  * @param {{fullName: string, email: string, password: string}} details
  * @returns {{fullName?: string, email?: string, password?: string}}
  */
-export function validateRegistration({ fullName, email, password }) {
+export function validateRegistration({
+  fullName,
+  email,
+  password,
+  role = 'buyer',
+}) {
   const errors = {}
   if (!fullName.trim()) errors.fullName = 'Enter your full name.'
-  // The design establishes required credentials only. Apply the backend's
-  // password policy here once its contract is agreed; do not invent one.
-  return { ...errors, ...validateLogin({ email, password }) }
+  if (fullName.trim().length > 100)
+    errors.fullName = 'Use at most 100 characters.'
+  Object.assign(errors, validateLogin({ email, password }))
+  if (password && (password.length < 8 || password.length > 128))
+    errors.password = 'Use between 8 and 128 characters.'
+  if (!['buyer', 'seller'].includes(role))
+    errors.role = 'Choose buyer or seller.'
+  return errors
 }

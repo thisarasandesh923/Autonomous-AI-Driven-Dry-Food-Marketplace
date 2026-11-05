@@ -47,9 +47,16 @@ for (const viewport of [
   })
 }
 
-test('keyboard validation, password visibility and unavailable actions', async ({
+test('keyboard validation, password visibility and API errors', async ({
   page,
 }) => {
+  await page.route('**/auth/login', (route) =>
+    route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      body: JSON.stringify({ detail: 'Invalid email or password' }),
+    }),
+  )
   const requests = []
   page.on('request', (request) => {
     if (
@@ -83,11 +90,7 @@ test('keyboard validation, password visibility and unavailable actions', async (
     'password',
   )
   await page.getByLabel('Password', { exact: true }).press('Enter')
-  await expect(
-    page.getByText(
-      'Sign-in is not available yet. Your details have not been sent.',
-    ),
-  ).toBeVisible()
+  await expect(page.getByText('Invalid email or password')).toBeVisible()
   await page.getByRole('link', { name: 'Create an account' }).click()
   await expect(page).toHaveURL(/\/register/)
   await expect(page.getByLabel('Full name')).toBeVisible()
@@ -96,7 +99,7 @@ test('keyboard validation, password visibility and unavailable actions', async (
   await expect(
     page.getByRole('heading', { name: 'Welcome back' }),
   ).toBeVisible()
-  expect(requests).toEqual([])
+  expect(requests).toHaveLength(1)
   expect(
     await page.evaluate(() => ({
       local: localStorage.length,

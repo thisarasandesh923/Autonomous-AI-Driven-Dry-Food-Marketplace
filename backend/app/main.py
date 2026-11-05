@@ -1,5 +1,7 @@
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import os
 from sqlalchemy import text
 
 from app.db.database import engine
@@ -14,6 +16,15 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin.strip() for origin in os.getenv(
+        "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(",") if origin.strip()],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Authorization", "Content-Type"],
+)
 
 # Register API Routers
 app.include_router(auth_router)

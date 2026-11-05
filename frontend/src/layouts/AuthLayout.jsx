@@ -7,6 +7,7 @@ export function AuthLayout({
   titleId,
   skipLinkLabel = 'Skip to main content',
   variant = 'login',
+  accountLabel = 'Pantry account',
 }) {
   return (
     <>
@@ -20,7 +21,7 @@ export function AuthLayout({
         <PageContainer className="flex min-h-(--header-height) items-center justify-between gap-4">
           <BrandLogo />
           <span className="mr-8.75 text-caption font-semibold text-text-secondary uppercase [display:var(--header-label-display)]">
-            Buyer account
+            {accountLabel}
           </span>
         </PageContainer>
       </header>
