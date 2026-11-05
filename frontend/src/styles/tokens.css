@@ -1,0 +1,125 @@
+/* Semantic Tailwind theme: colors and type are shared by every component. */
+@theme {
+  --color-*: initial;
+  --color-primary: #a0522d;
+  --color-primary-hover: #874323;
+  --color-secondary: #c9932e;
+  --color-background: #faf7f0;
+  --color-surface: #fefcf8;
+  --color-text-primary: #2b211b;
+  --color-text-secondary: #71645c;
+  --color-border: #e4ddd3;
+  --color-on-primary: var(--color-surface);
+  --color-focus: var(--color-text-primary);
+  --color-error: #a52a21;
+  --color-error-surface: #fff0ed;
+  --color-notice-surface: #f0e6d7;
+  --color-disabled-surface: #e9e1d6;
+
+  /* Accessible small-text variant of Figma's gold on terracotta (2.06:1). */
+  --color-secondary-on-primary: #ffe6b8;
+
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --text-caption: 0.75rem;
+  --text-small: 0.875rem;
+  --text-label: 0.9375rem;
+  --text-body: 1rem;
+  --text-lead: 1.0625rem;
+  --text-brand: 2.125rem;
+  --text-editorial: clamp(2rem, 3.334vw, 3rem);
+  --text-title: clamp(2.375rem, 3.681vw, 3.3125rem);
+  --leading-body: 1.5;
+  --leading-heading: 1.375;
+  --leading-control: 1.25;
+  --leading-label: 1.2;
+
+  --spacing: 0.25rem;
+  --radius-control: 0.375rem;
+  --radius-panel: 0.75rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-lg: 64rem;
+}
+
+:root {
+  color-scheme: light;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --radius-full: 999px;
+  --border-width: 1px;
+  --shadow-none: none;
+  --focus-width: 2px;
+  --focus-offset: 3px;
+  --control-height: 3.3125rem;
+  --button-height: 3.375rem;
+  --field-label-gap: 0.6875rem;
+  --form-field-gap: 1.3125rem;
+  --motion-fast: 160ms;
+
+  /* Shared responsive foundations: wide >64rem, tablet <=64rem, mobile <=40rem.
+     These match the Tailwind sm/lg theme breakpoints above. Exact inclusive
+     boundaries preserve the approved login layout at 640px and 1024px.
+     Media queries live here because native CSS variables cannot be used in
+     media-query conditions. Layouts consume these responsive token values. */
+  --page-max-width: 90rem;
+  --page-gutter: clamp(2rem, 4.167vw, 3.75rem);
+  --header-height: 5.875rem;
+  --header-label-display: block;
+  --auth-columns: minmax(0, 613fr) minmax(0, 567fr);
+  --auth-gap: clamp(3rem, 9.722vw, 8.75rem);
+  --auth-top-space: 2.4375rem;
+  --auth-bottom-space: 3.875rem;
+  --auth-form-offset: 6.5625rem;
+  --auth-form-order: 2;
+  --auth-editorial-order: 1;
+  --auth-form-width: 30.9375rem;
+  --auth-form-alignment: start;
+  --auth-editorial-image-ratio: 613 / 499;
+  --auth-editorial-copy-height: 16.625rem;
+  --auth-editorial-inset: 2.125rem;
+  --auth-heading-gap: 1.0625rem;
+  --auth-description-gap: 0.5rem;
+  --auth-fields-gap: 2.9375rem;
+
+  @media (width <= 64rem) {
+    --page-gutter: 2rem;
+    --auth-columns: minmax(0, 1fr);
+    --auth-gap: 3rem;
+    --auth-form-offset: 0;
+    --auth-form-order: 1;
+    --auth-editorial-order: 2;
+    --auth-form-alignment: center;
+    --auth-editorial-image-ratio: 16 / 9;
+    --auth-editorial-copy-height: auto;
+    --auth-top-space: 3rem;
+    --text-editorial: 2.5rem;
+    --text-title: 3rem;
+  }
+
+  @media (width <= 40rem) {
+    --page-gutter: 1.5rem;
+    --header-height: 5rem;
+    --header-label-display: none;
+    --text-brand: 1.75rem;
+    --text-title: 2.375rem;
+    --text-editorial: 2rem;
+    --auth-top-space: 2rem;
+    --auth-bottom-space: 2rem;
+    --auth-editorial-inset: 1.5rem;
+    --auth-fields-gap: 2rem;
+    --auth-heading-gap: 0.75rem;
+  }
+}
