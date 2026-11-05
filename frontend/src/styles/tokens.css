@@ -83,6 +83,8 @@
   --auth-top-space: 2.4375rem;
   --auth-bottom-space: 3.875rem;
   --auth-form-offset: 6.5625rem;
+  --auth-register-form-offset: 3.125rem;
+  --register-fields-gap: 3.125rem;
   --auth-form-order: 2;
   --auth-editorial-order: 1;
   --auth-form-width: 30.9375rem;
@@ -99,6 +101,7 @@
     --auth-columns: minmax(0, 1fr);
     --auth-gap: 3rem;
     --auth-form-offset: 0;
+    --auth-register-form-offset: 0;
     --auth-form-order: 1;
     --auth-editorial-order: 2;
     --auth-form-alignment: center;
@@ -120,6 +123,7 @@
     --auth-bottom-space: 2rem;
     --auth-editorial-inset: 1.5rem;
     --auth-fields-gap: 2rem;
+    --register-fields-gap: var(--auth-fields-gap);
     --auth-heading-gap: 0.75rem;
   }
 }

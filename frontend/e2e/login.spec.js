@@ -88,11 +88,14 @@ test('keyboard validation, password visibility and unavailable actions', async (
       'Sign-in is not available yet. Your details have not been sent.',
     ),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Create an account' }).click()
-  await expect(
-    page.getByText('Account registration is not available yet.'),
-  ).toBeVisible()
+  await page.getByRole('link', { name: 'Create an account' }).click()
+  await expect(page).toHaveURL(/\/register/)
+  await expect(page.getByLabel('Full name')).toBeVisible()
+  await page.getByRole('link', { name: 'Log in', exact: true }).click()
   await expect(page).toHaveURL(/\/login/)
+  await expect(
+    page.getByRole('heading', { name: 'Welcome back' }),
+  ).toBeVisible()
   expect(requests).toEqual([])
   expect(
     await page.evaluate(() => ({

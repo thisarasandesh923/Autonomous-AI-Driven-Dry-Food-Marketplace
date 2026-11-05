@@ -1,6 +1,8 @@
 import { Button } from '../../components/ui/Button'
 import { FormField } from '../../components/ui/FormField'
 import { Input } from '../../components/ui/Input'
+import { PasswordInput } from '../../components/ui/PasswordInput'
+import { FormNotice } from '../../components/ui/FormNotice'
 import { useLoginForm } from './useLoginForm'
 
 export function LoginForm({ onLogin }) {
@@ -10,18 +12,16 @@ export function LoginForm({ onLogin }) {
     errors,
     notice,
     isSubmitting,
-    showPassword,
-    emailRef,
-    passwordRef,
+    formRef,
     updateField,
     submit,
-    togglePassword,
   } = useLoginForm(onLogin)
   const emailId = `${id}-email`
   const passwordId = `${id}-password`
 
   return (
     <form
+      ref={formRef}
       className="flex flex-col gap-6"
       onSubmit={submit}
       noValidate
@@ -30,7 +30,6 @@ export function LoginForm({ onLogin }) {
       <div className="flex flex-col gap-(--form-field-gap)">
         <FormField id={emailId} label="Email address" error={errors.email}>
           <Input
-            ref={emailRef}
             id={emailId}
             name="email"
             type="email"
@@ -47,11 +46,9 @@ export function LoginForm({ onLogin }) {
           />
         </FormField>
         <FormField id={passwordId} label="Password" error={errors.password}>
-          <Input
-            ref={passwordRef}
+          <PasswordInput
             id={passwordId}
             name="password"
-            type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
             required
             placeholder="Enter your password"
@@ -62,36 +59,13 @@ export function LoginForm({ onLogin }) {
             aria-describedby={
               errors.password ? `${passwordId}-error` : undefined
             }
-            trailingAction={
-              <button
-                className="min-h-11 min-w-15 rounded-control border-0 bg-transparent p-2 text-caption font-semibold text-primary enabled:hover:bg-background"
-                type="button"
-                onClick={togglePassword}
-                disabled={isSubmitting}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                aria-controls={passwordId}
-              >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
-            }
           />
         </FormField>
       </div>
       <Button type="submit" isLoading={isSubmitting} loadingLabel="Signing in…">
         Log in
       </Button>
-      <p
-        className={
-          notice
-            ? 'rounded-control bg-notice-surface px-4 py-3 text-small text-text-primary wrap-anywhere'
-            : 'sr-only'
-        }
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {notice}
-      </p>
+      <FormNotice>{notice}</FormNotice>
     </form>
   )
 }

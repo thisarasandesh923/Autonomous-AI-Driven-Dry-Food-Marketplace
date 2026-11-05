@@ -1,6 +1,6 @@
 # Ceylon Pantry frontend
 
-React + JavaScript (JSX) + Vite + Tailwind CSS implementation of the approved buyer login screen. This
+React + JavaScript (JSX) + Vite + Tailwind CSS implementation of the approved buyer login and registration screens. This
 frontend is isolated from the future FastAPI backend. The Figma branding is kept
 as **Ceylon Pantry**; the repository's project name is unchanged.
 
@@ -14,8 +14,10 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173/login`. The root URL renders the same login screen.
-Only the login page is implemented; no routing library is needed yet.
+Open `http://127.0.0.1:5173/login` or `http://127.0.0.1:5173/register`.
+The root URL renders the login screen. Native links and a small pathname switch
+in the application entry use Vite's existing SPA fallback; no routing dependency
+is added. Production hosting must serve the application entry for both paths.
 
 ## Quality checks
 
@@ -43,14 +45,16 @@ npm run test:e2e
 
 ## Structure
 
-- [Application entry](src/app/App.jsx): renders the login page.
+- [Application entry](src/app/App.jsx): selects the login or registration page.
 - [Login page](src/pages/LoginPage.jsx): composes the screen and registration handoff.
+- [Register page](src/pages/RegisterPage.jsx): composes the registration screen and login link.
 - [Authentication feature](src/features/auth/): form UI, validation and submission state.
-- [Shared components](src/components/): Button, Input, FormField, BrandLogo and PageContainer.
+- [Shared components](src/components/): Button, Input, FormField, PasswordInput, FormNotice, BrandLogo and PageContainer.
 - [Authentication layout](src/layouts/AuthLayout.jsx): masthead and editorial image panel.
 - [Design tokens](src/styles/tokens.css): Tailwind theme with semantic palette, typography, spacing, dimensions and responsive variables.
 - [Assets](src/assets/): the original Figma food photograph, bundled locally.
 - [Browser tests](e2e/login.spec.js): keyboard interactions, responsive screenshots and automated accessibility checks.
+- [Registration browser tests](e2e/register.spec.js): field validation, keyboard flow, navigation, asset geometry and responsive accessibility checks.
 
 ## Authentication integration
 
@@ -66,9 +70,25 @@ navigation. The form handles pending/disabled controls, duplicate submission
 protection and a generic failure message. Email is trimmed; passwords are not.
 Never log or persist credentials in browser storage.
 
-Until registration exists, its action reports that registration is unavailable.
-Pass the approved `registrationHref` when a real destination exists. No unrelated
-registration screen has been added.
+The application supplies `/register` as the login page's `registrationHref`.
+Registration accepts exactly the Figma fields: full name, email and password.
+It checks nonblank trimmed name/email, email format and a required password.
+It accepts single-part and international names and preserves password whitespace.
+No confirmation field, consent checkbox, password-length rule or 2FA step is
+invented. The approved backend password policy must be added before real signup.
+
+The [registration callback](src/features/auth/useRegisterForm.js) accepts
+`{ fullName, email, password }` and returns a promise. This is a frontend handoff,
+not an assumed API payload. Supply `onRegister` to the register page only after
+the backend contract is established; its adapter owns account creation and
+next-step navigation. Without it, submission reports:
+
+> Account registration is not available yet. Your details have not been sent.
+
+Both forms share [submission state](src/features/auth/useAuthForm.js), error focus,
+duplicate-request protection, password visibility and accessible status messages.
+Tests inject adapters to exercise loading/failure states; the application never
+simulates successful authentication or registration.
 
 ## Design reference and deliberate adaptations
 
@@ -78,6 +98,13 @@ MCP and downloaded into this project; runtime assets do not use expiring URLs.
 DM Serif Display (400) and Inter (400/600) are self-hosted through Fontsource and
 bundled by Vite, so rendering does not depend on Google Fonts requests. Font
 licenses are included in their installed Fontsource packages.
+
+[Figma buyer registration, node 2024:24](https://www.figma.com/design/RUAeTIAlYdTFPZIE4l2tmX?node-id=2024-24)
+uses the same masthead, photograph and editorial panel. Its image was retrieved
+through Figma MCP and confirmed to match the existing asset by SHA-256, so it is
+reused. Only two layout variables were added to the existing token stylesheet:
+the registration form's desktop top offset and its spacing above the fields.
+Colors, typography, control sizes and responsive breakpoints remain shared.
 
 The initial semantic palette is primary `#A0522D`, secondary `#C9932E`, background
 `#FAF7F0`, surface `#FEFCF8`, primary text `#2B211B`, secondary text `#71645C` and
@@ -104,6 +131,6 @@ utilities, while standard padding and gaps use its quarter-rem spacing scale.
 
 ## Scope
 
-This change contains only the login screen, its shared foundations and relevant
-tests. Real authentication, account registration, password recovery, 2FA and
+This frontend contains only the login and registration screens, their shared foundations and relevant
+tests. Real authentication, backend account creation, password recovery, 2FA and
 other marketplace pages require separate approval and backend/design contracts.

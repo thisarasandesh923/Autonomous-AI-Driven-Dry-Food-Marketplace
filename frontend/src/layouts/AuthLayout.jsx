@@ -6,6 +6,7 @@ export function AuthLayout({
   children,
   titleId,
   skipLinkLabel = 'Skip to main content',
+  variant = 'login',
 }) {
   return (
     <>
@@ -26,7 +27,7 @@ export function AuthLayout({
       <main id="main-content" tabIndex={-1}>
         <PageContainer className="grid grid-cols-(--auth-columns) items-start gap-(--auth-gap) pt-(--auth-top-space) pb-(--auth-bottom-space)">
           <section
-            className="order-(--auth-form-order) mt-(--auth-form-offset) w-full min-w-0 max-w-(--auth-form-width) [justify-self:var(--auth-form-alignment)]"
+            className={`order-(--auth-form-order) w-full min-w-0 max-w-(--auth-form-width) [justify-self:var(--auth-form-alignment)] ${variant === 'register' ? 'mt-(--auth-register-form-offset)' : 'mt-(--auth-form-offset)'}`}
             aria-labelledby={titleId}
           >
             {children}

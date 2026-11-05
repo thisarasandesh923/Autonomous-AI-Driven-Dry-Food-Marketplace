@@ -17,3 +17,15 @@ export function validateLogin({ email, password }) {
 
   return errors
 }
+
+/**
+ * @param {{fullName: string, email: string, password: string}} details
+ * @returns {{fullName?: string, email?: string, password?: string}}
+ */
+export function validateRegistration({ fullName, email, password }) {
+  const errors = {}
+  if (!fullName.trim()) errors.fullName = 'Enter your full name.'
+  // The design establishes required credentials only. Apply the backend's
+  // password policy here once its contract is agreed; do not invent one.
+  return { ...errors, ...validateLogin({ email, password }) }
+}

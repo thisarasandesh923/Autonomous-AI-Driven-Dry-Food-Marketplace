@@ -1,7 +1,11 @@
 import { LoginPage } from '../pages/LoginPage'
+import { RegisterPage } from '../pages/RegisterPage'
 
-// Authentication and registration are deliberately not connected until their
-// backend contract and destination are available.
+// Native links load each route through Vite's existing SPA fallback. Keep this
+// small route selection dependency-free until broader marketplace routing exists.
 export function App() {
-  return <LoginPage />
+  if (window.location.pathname.replace(/\/+$/, '') === '/register') {
+    return <RegisterPage />
+  }
+  return <LoginPage registrationHref="/register" />
 }
