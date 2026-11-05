@@ -8,6 +8,7 @@ from app.db.database import engine
 from app.routers.auth import router as auth_router
 from app.routers.seller import router as seller_router
 from app.routers.buyer import router as buyer_router
+from app.routers.products import router as products_router
 
 # Create FastAPI application
 app = FastAPI(
@@ -30,6 +31,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(seller_router)
 app.include_router(buyer_router)
+app.include_router(products_router)
 
 # Home Endpoint
 @app.get("/")
