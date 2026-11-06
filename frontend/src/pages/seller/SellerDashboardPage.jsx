@@ -43,9 +43,9 @@ export function SellerDashboardPage({ preview = false, previewIdentity }) {
               <p className="market-eyebrow">Operational dashboard</p>
               <h1>{data.profile?.name || user.name}</h1>
               <p>
-                {data.profile?.location || 'Business profile pending'}
+                {data.profile?.location || 'Business profile not available'}
                 {data.summary &&
-                  ` · ${data.summary.approved_products} approved products · ${data.summary.available_packs} available packs`}
+                  ` · ${data.summary.total_products ?? data.inventory?.length ?? 0} products · ${data.summary.available_packs} available packs`}
               </p>
               {data.snapshot_at && (
                 <Notice>
@@ -57,7 +57,11 @@ export function SellerDashboardPage({ preview = false, previewIdentity }) {
                 </Notice>
               )}
             </section>
-            <SellerKpiGrid summary={data.summary} isDemo={data.is_demo} />
+            <SellerKpiGrid
+              summary={data.summary}
+              isDemo={data.is_demo}
+              unavailable={data.unavailable}
+            />
             <div className="seller-summary-grid">
               <SellerOrdersSummary
                 orders={data.orders}

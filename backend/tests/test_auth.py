@@ -13,7 +13,7 @@ from sqlalchemy.pool import StaticPool
 
 from app.main import app
 from app.models.user import Base, User
-from app.routers import auth
+from app.routers import auth, seller
 from app.core import dependencies, security
 
 
@@ -22,6 +22,7 @@ def client(monkeypatch):
     engine = create_engine('sqlite://', connect_args={'check_same_thread': False}, poolclass=StaticPool)
     Base.metadata.create_all(engine)
     monkeypatch.setattr(auth, 'engine', engine)
+    monkeypatch.setattr(seller, 'engine', engine)
     monkeypatch.setattr(dependencies, 'engine', engine)
     with TestClient(app) as client:
         yield client, engine

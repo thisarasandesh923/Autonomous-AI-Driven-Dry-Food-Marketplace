@@ -25,7 +25,7 @@ export function SellerLayout({ profile, user, children, isDemo }) {
               ? profile.approved
                 ? 'Approved seller'
                 : 'Pending approval'
-              : 'Profile pending'}
+              : 'Not configured'}
           </p>
           <p>{user.email}</p>
           <small>

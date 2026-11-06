@@ -1,5 +1,9 @@
 import { money } from '../../catalogue/api'
-export function SellerKpiGrid({ summary = {}, isDemo = false }) {
+export function SellerKpiGrid({
+  summary = {},
+  isDemo = false,
+  unavailable = {},
+}) {
   const cards = [
     [
       'Own revenue',
@@ -24,7 +28,9 @@ export function SellerKpiGrid({ summary = {}, isDemo = false }) {
     [
       'Low stock',
       summary.low_stock ?? 'Unavailable',
-      'Products below their restock threshold.',
+      summary.low_stock == null
+        ? unavailable.low_stock || 'Restock thresholds are not configured.'
+        : 'Products below their restock threshold.',
     ],
     [
       'Forecast error',

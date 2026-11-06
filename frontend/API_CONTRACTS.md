@@ -115,6 +115,14 @@ subtotal only. It does not create an order, cart or payment.
 
 ## Protected seller dashboard
 
+**Implemented contract update:** see [Seller dashboard integration](../SELLER_INTEGRATION.md).
+The current backend returns owned `ProductRead` inventory (`pack_size`, decimal
+`price`, `stock_quantity`) and `summary.total_products`/`available_packs`.
+It does not supply variants, approvals, currency or restock thresholds. Missing
+profile, orders, forecast and associated metrics are null with explanations.
+The live UI supports this actual shape; the richer shape below remains a future
+contract and an explicit frontend demo format.
+
 `GET /seller/dashboard`: bearer JWT, seller role. Ownership must come from the
 verified account, never a frontend-supplied seller identifier. Retain the existing
 `message` and `user` fields when extending the current contract.

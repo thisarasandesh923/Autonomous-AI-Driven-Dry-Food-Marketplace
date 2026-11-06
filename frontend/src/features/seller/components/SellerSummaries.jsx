@@ -87,10 +87,7 @@ export function SellerInventorySummary({ inventory = [], isDemo = false }) {
       <p className="market-eyebrow">Own stock & listing states</p>
       <h2>Inventory</h2>
       {isDemo && <span className="market-badge">DEMO DATA · Sample stock</span>}
-      <p>
-        {inventory.filter((p) => p.approved).length} approved products ·
-        Read-only
-      </p>
+      <p>{inventory.length} products · Read-only</p>
       {inventory.length === 0 ? (
         <div className="seller-empty">
           <h3>No products yet</h3>
@@ -103,24 +100,35 @@ export function SellerInventorySummary({ inventory = [], isDemo = false }) {
           <article className="seller-row" key={product.id}>
             <div>
               <h3>{product.name}</h3>
-              {product.variants.map((v) => (
-                <p key={v.id}>
-                  {v.pack} · {money(v.price_minor, product.currency)} ·{' '}
-                  {v.stock} packs{' '}
-                  {v.stock < v.restock_threshold && (
-                    <span className="market-badge">
-                      Low stock · threshold {v.restock_threshold}
-                    </span>
-                  )}
-                </p>
-              ))}
+              {product.variants ? (
+                product.variants.map((v) => (
+                  <p key={v.id}>
+                    {v.pack} · {money(v.price_minor, product.currency)} ·{' '}
+                    {v.stock} packs{' '}
+                    {v.stock < v.restock_threshold && (
+                      <span className="market-badge">
+                        Low stock · threshold {v.restock_threshold}
+                      </span>
+                    )}
+                  </p>
+                ))
+              ) : (
+                <>
+                  <p>
+                    {product.pack_size} · {product.stock_quantity} packs
+                  </p>
+                  <p>Price {product.price} · currency not configured</p>
+                </>
+              )}
             </div>
             <span className={`market-badge ${product.approved ? 'green' : ''}`}>
-              {!product.active
-                ? 'Inactive'
-                : product.approved
-                  ? 'Approved'
-                  : 'Pending'}
+              {product.approved == null || product.active == null
+                ? 'Approval status unavailable'
+                : !product.active
+                  ? 'Inactive'
+                  : product.approved
+                    ? 'Approved'
+                    : 'Pending'}
             </span>
           </article>
         ))

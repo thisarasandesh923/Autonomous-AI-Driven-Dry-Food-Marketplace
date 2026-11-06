@@ -84,8 +84,8 @@ export function SellerForecastPanel({ forecast, reason }) {
             </small>
           </div>
           <div className="market-notice">
-            Inventory thresholds are available above. Forecasting and automatic
-            recommendations will be added in a future phase.
+            Forecasting and automatic recommendations require a connected
+            forecasting data source.
           </div>
         </>
       )}

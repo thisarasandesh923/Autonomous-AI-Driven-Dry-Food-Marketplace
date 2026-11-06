@@ -9,7 +9,7 @@ os.environ.setdefault('JWT_SECRET_KEY', secrets.token_urlsafe(48))
 
 from sqlalchemy import create_engine
 from app.models.user import Base
-from app.routers import auth
+from app.routers import auth, buyer, products, seller
 from app.core import dependencies
 from app.main import app
 
@@ -18,4 +18,7 @@ engine = create_engine(f'sqlite:///{Path(temporary.name) / "users.sqlite"}', con
 atexit.register(engine.dispose)
 Base.metadata.create_all(engine)
 auth.engine = engine
+buyer.engine = engine
+products.engine = engine
+seller.engine = engine
 dependencies.engine = engine
