@@ -4,6 +4,7 @@ import '@fontsource/dm-serif-display/latin-400.css'
 import '@fontsource/inter/latin-400.css'
 import '@fontsource/inter/latin-600.css'
 import './styles/global.css'
+import './styles/marketplace.css'
 import { App } from './app/App'
 
 const root = document.getElementById('root')

@@ -2,20 +2,20 @@ import { useAuthForm } from './useAuthForm'
 import { validateRegistration } from './validation'
 
 /**
- * @param {((details: {fullName: string, email: string, password: string}) => Promise<void>)} [onRegister]
- * An approved API adapter must own account creation and any next-step navigation.
- * This callback is a UI integration boundary, not an assumed backend schema.
+ * @param {((details: {fullName: string, email: string, password: string, role: string}) => Promise<void>)} [onRegister]
+ * The application adapter maps fullName to the API's name field.
  */
 export function useRegisterForm(onRegister) {
   return useAuthForm({
-    initialValues: { fullName: '', email: '', password: '' },
+    initialValues: { fullName: '', email: '', password: '', role: 'buyer' },
     validate: validateRegistration,
     onSubmit: onRegister
-      ? ({ fullName, email, password }) =>
+      ? ({ fullName, email, password, role }) =>
           onRegister({
             fullName: fullName.trim(),
             email: email.trim(),
             password,
+            role,
           })
       : undefined,
     unavailableMessage:

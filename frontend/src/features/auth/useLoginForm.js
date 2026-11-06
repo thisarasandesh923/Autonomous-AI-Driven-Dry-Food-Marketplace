@@ -3,7 +3,7 @@ import { validateLogin } from './validation'
 
 /**
  * @param {((credentials: {email: string, password: string}) => Promise<void>)} [onLogin]
- * The future API adapter owns session establishment and post-login navigation.
+ * The application adapter owns session establishment and post-login navigation.
  * Credentials are passed only to this explicitly provided handler.
  */
 export function useLoginForm(onLogin) {

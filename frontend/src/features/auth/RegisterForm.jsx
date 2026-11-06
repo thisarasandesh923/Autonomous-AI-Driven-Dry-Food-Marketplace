@@ -77,6 +77,22 @@ export function RegisterForm({ onRegister }) {
             }
           />
         </FormField>
+        <FormField id={`${id}-role`} label="Account role" error={errors.role}>
+          <select
+            id={`${id}-role`}
+            name="role"
+            value={values.role}
+            onChange={(event) => updateField('role', event.target.value)}
+            disabled={isSubmitting}
+            required
+            aria-invalid={Boolean(errors.role)}
+            aria-describedby={errors.role ? `${id}-role-error` : undefined}
+            className="h-(--control-height) w-full rounded-control border border-border bg-surface px-4 text-body text-text-primary"
+          >
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+          </select>
+        </FormField>
       </div>
       <Button
         type="submit"

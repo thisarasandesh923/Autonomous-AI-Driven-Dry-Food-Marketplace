@@ -121,6 +121,7 @@ describe('RegisterForm', () => {
       fullName: 'කමල්',
       email: 'buyer@example.com',
       password: '  secret  ',
+      role: 'buyer',
     })
     await act(async () => {
       complete()

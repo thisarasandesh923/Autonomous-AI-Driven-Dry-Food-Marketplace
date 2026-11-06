@@ -1,4 +1,5 @@
 import { useId, useRef, useState } from 'react'
+import { ApiError } from '../../api/client'
 
 // Shared form mechanics; each feature supplies validation and its API handoff.
 export function useAuthForm({
@@ -43,8 +44,11 @@ export function useAuthForm({
     setIsSubmitting(true)
     try {
       await onSubmit(values)
-    } catch {
-      setNotice(failureMessage)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.fields)
+        setNotice(error.message)
+      } else setNotice(failureMessage)
     } finally {
       submitting.current = false
       setIsSubmitting(false)

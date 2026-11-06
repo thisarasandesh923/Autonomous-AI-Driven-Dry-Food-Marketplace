@@ -1,136 +1,117 @@
-# Ceylon Pantry frontend
+﻿# Ceylon Pantry — frontend-only development
 
-React + JavaScript (JSX) + Vite + Tailwind CSS implementation of the approved buyer login and registration screens. This
-frontend is isolated from the future FastAPI backend. The Figma branding is kept
-as **Ceylon Pantry**; the repository's project name is unchanged.
+The current team workflow develops the frontend independently. Do not start or
+modify FastAPI/PostgreSQL, run migrations, or use backend demo fixtures to preview
+these screens. Earlier backend changes remain in the working tree for team review;
+they were neither reverted nor modified in the frontend-only task.
 
-## Run locally
+## Start the frontend
 
-Use Node.js 24 LTS and npm (the implementation was verified with Node 24.14.1).
-From this directory:
-
-```sh
-npm ci
-npm run dev
-```
-
-Open `http://127.0.0.1:5173/login` or `http://127.0.0.1:5173/register`.
-The root URL renders the login screen. Native links and a small pathname switch
-in the application entry use Vite's existing SPA fallback; no routing dependency
-is added. Production hosting must serve the application entry for both paths.
-
-## Quality checks
-
-```sh
-npm run build
-npm run lint
-npm run format:check
-npm test
-npx playwright install chromium
-npm run test:e2e
-```
-
-`npm run preview` serves the production build. Playwright starts the development
-server if necessary. Browser-test screenshots and failure traces are written to
-the ignored `test-results/` directory. Browser binaries must be installed once
-per machine. Tests use injected handlers, not a simulated application login.
-
-Alternatively, use an already installed Chrome browser by setting
-`PLAYWRIGHT_CHANNEL=chrome` before running the browser tests. In PowerShell:
+From the repository root in PowerShell:
 
 ```powershell
-$env:PLAYWRIGHT_CHANNEL = 'chrome'
-npm run test:e2e
+cd frontend
+$env:VITE_DATA_MODE='demo'
+npm.cmd run dev -- --port 5173 --strictPort
 ```
 
-## Structure
+If Vite is already running, stop it with Ctrl+C and restart so the mode is clear.
+Existing dependencies are sufficient; no new dependencies were added. On a fresh
+checkout, install the existing lockfile with `npm.cmd ci` first.
 
-- [Application entry](src/app/App.jsx): selects the login or registration page.
-- [Login page](src/pages/LoginPage.jsx): composes the screen and registration handoff.
-- [Register page](src/pages/RegisterPage.jsx): composes the registration screen and login link.
-- [Authentication feature](src/features/auth/): form UI, validation and submission state.
-- [Shared components](src/components/): Button, Input, FormField, PasswordInput, FormNotice, BrandLogo and PageContainer.
-- [Authentication layout](src/layouts/AuthLayout.jsx): masthead and editorial image panel.
-- [Design tokens](src/styles/tokens.css): Tailwind theme with semantic palette, typography, spacing, dimensions and responsive variables.
-- [Assets](src/assets/): the original Figma food photograph, bundled locally.
-- [Browser tests](e2e/login.spec.js): keyboard interactions, responsive screenshots and automated accessibility checks.
-- [Registration browser tests](e2e/register.spec.js): field validation, keyboard flow, navigation, asset geometry and responsive accessibility checks.
+Exact preview URLs:
 
-## Authentication integration
+- Catalogue: http://127.0.0.1:5173/products
+- Details (existing frontend demo product 1): http://127.0.0.1:5173/products/1
+- Seller preview: http://127.0.0.1:5173/demo/seller/dashboard
 
-There is no authentication API, fabricated endpoint, credential persistence or
-successful-login simulation. A valid submission currently reports:
+The seller preview is deliberately separate from `/seller/dashboard`, which
+retains real JWT/role protection. No demo login, fake token, registration, or
+persistent transaction is created. Login/registration and the AuthProvider
+continue using the real API; backend access is needed only to exercise actual
+account authentication, not to preview the three screens.
 
-> Sign-in is not available yet. Your details have not been sent.
+## Demo data isolation
 
-The optional handler documented in [useLoginForm](src/features/auth/useLoginForm.js)
-accepts an object containing email and password and returns a promise. Once the backend contract is approved, supply
-`onLogin` to the page. The adapter must handle the real session and successful
-navigation. The form handles pending/disabled controls, duplicate submission
-protection and a generic failure message. Email is trimmed; passwords are not.
-Never log or persist credentials in browser storage.
+- `src/config/dataMode.js`: development defaults to demo; production and unit tests
+  default to API mode. `VITE_DATA_MODE` explicitly selects demo or api.
+- `src/mocks/data.js`: labelled sample products/variants, seller identity, order,
+  inventory and synthetic forecast. None is presented as production business data.
+- `src/mocks/catalogueService.js`: in-memory search/filter/sort before pagination,
+  detail lookup and related products. Responses are cancellable and cloned.
+- `src/mocks/sellerService.js`: read-only sample dashboard response.
+- `src/assets/demo/`: intentional SVG placeholders, not product photographs.
+- `features/catalogue/apiService.js`: real HTTP implementation using the existing
+  API client. It does not import fixtures or fall back silently on request failure.
+- The seller preview is lazy-loaded; the authenticated seller service is unchanged.
 
-The application supplies `/register` as the login page's `registrationHref`.
-Registration accepts exactly the Figma fields: full name, email and password.
-It checks nonblank trimmed name/email, email format and a required password.
-It accepts single-part and international names and preserves password whitespace.
-No confirmation field, consent checkbox, password-length rule or 2FA step is
-invented. The approved backend password policy must be added before real signup.
+All mock-backed pages show DEMO DATA. Cart, wishlist, contact, AI, payment and
+management mutations remain unavailable. Quantity and variants update only a
+local displayed subtotal. Mock services never call fetch, write browser storage,
+or perform backend operations. Changing mock fixtures affects previews only.
 
-The [registration callback](src/features/auth/useRegisterForm.js) accepts
-`{ fullName, email, password }` and returns a promise. This is a frontend handoff,
-not an assumed API payload. Supply `onRegister` to the register page only after
-the backend contract is established; its adapter owns account creation and
-next-step navigation. Without it, submission reports:
+Catalogue search, filters, sorting and pagination are URL state. Details preserve
+origin URL and scroll through browser history, including detail reload and Back.
+Direct/new-tab details without origin state return to the catalogue root.
 
-> Account registration is not available yet. Your details have not been sent.
+## Future backend integration
 
-Both forms share [submission state](src/features/auth/useAuthForm.js), error focus,
-duplicate-request protection, password visibility and accessible status messages.
-Tests inject adapters to exercise loading/failure states; the application never
-simulates successful authentication or registration.
+See [API_CONTRACTS.md](API_CONTRACTS.md) for the proposed schemas and unresolved
+team decisions. To explicitly use the real services later:
 
-## Design reference and deliberate adaptations
+```powershell
+$env:VITE_DATA_MODE='api'
+$env:VITE_API_URL='http://127.0.0.1:8000'
+npm.cmd run dev -- --port 5173 --strictPort
+```
 
-[Figma buyer login, node 2024:2](https://www.figma.com/design/RUAeTIAlYdTFPZIE4l2tmX?node-id=2024-2)
-is the visual reference at 1440 × 960. The photograph was exported through Figma
-MCP and downloaded into this project; runtime assets do not use expiring URLs.
-DM Serif Display (400) and Inter (400/600) are self-hosted through Fontsource and
-bundled by Vite, so rendering does not depend on Google Fonts requests. Font
-licenses are included in their installed Fontsource packages.
+Changing environment values requires restarting Vite. Production builds default
+to API mode. If a different backend shape is agreed, adapt the feature service
+layer; UI components should keep their existing view-data shape. No backend
+endpoint is implemented as part of this frontend-only work.
 
-[Figma buyer registration, node 2024:24](https://www.figma.com/design/RUAeTIAlYdTFPZIE4l2tmX?node-id=2024-24)
-uses the same masthead, photograph and editorial panel. Its image was retrieved
-through Figma MCP and confirmed to match the existing asset by SHA-256, so it is
-reused. Only two layout variables were added to the existing token stylesheet:
-the registration form's desktop top offset and its spacing above the fields.
-Colors, typography, control sizes and responsive breakpoints remain shared.
+## Frontend verification
 
-The initial semantic palette is primary `#A0522D`, secondary `#C9932E`, background
-`#FAF7F0`, surface `#FEFCF8`, primary text `#2B211B`, secondary text `#71645C` and
-border `#E4DDD3`. Components use semantic Tailwind utilities such as `bg-primary`,
-`text-text-secondary`, `font-display` and `rounded-control` rather than repeating
-hex colors. The official `@tailwindcss/vite` plugin builds the stylesheet.
+```powershell
+npm.cmd run build
+npm.cmd run lint
+npm.cmd test
+$env:VITE_DATA_MODE='demo'
+$env:PLAYWRIGHT_CHANNEL='msedge'
+Remove-Item Env:DRYLEAF_LIVE_API -ErrorAction SilentlyContinue
+npm.cmd run test:e2e
+```
 
-The [global stylesheet](src/styles/global.css) imports Tailwind and the shared
-theme. Global defaults and accessibility rules live in Tailwind's base layer;
-component styling uses utility classes directly. CSS Modules are no longer used.
-Figma-specific dimensions use shared variables through Tailwind's custom-property
-utilities, while standard padding and gaps use its quarter-rem spacing scale.
+Use installed Edge, or an already available Playwright browser. No database or
+API process is required. Live-API test files remain opt-in and are skipped when
+DRYLEAF_LIVE_API is absent. Frontend demo tests assert no API requests/token
+creation, interactions, routes, query/scroll restoration, and accessibility at
+1440px, 768px and 390px. Existing authentication unit and browser tests remain.
 
-- Small gold text on terracotta uses `secondary-on-primary` (`#FFE6B8`) for
-  readable contrast; the original secondary color remains available.
-- A keyboard-accessible Show/Hide password control is added as requested.
-- The two-column layout becomes a form-first single column at 64rem. Compact
-  spacing applies at 40rem. These breakpoint rules are centralized in the token
-  stylesheet; native CSS variables cannot be used as media-query conditions.
-- Mobile/tablet arrangements are implementation adaptations because the supplied
-  frame defines desktop only. The editorial image remains present below the form.
-- The layout expands for validation messages and enlarged text rather than using
-  a fixed-height form. Reduced-motion preferences are respected.
+## Design and structure
 
-## Scope
+Official Figma file: eZh7aN3OQ5Glv2JKg0EOzr. Catalogue 5:2275, Product Details
+5:2500, Seller Dashboard 5:2710. Supplied exports remain the visual reference.
+Cream/terracotta, DM Serif Display, Inter, local fonts, existing semantic Tailwind
+tokens and authentication artwork are retained. Responsive adaptations are tested;
+mobile frames were not supplied. No new global state or styling dependency exists.
 
-This frontend contains only the login and registration screens, their shared foundations and relevant
-tests. Real authentication, backend account creation, password recovery, 2FA and
-other marketplace pages require separate approval and backend/design contracts.
+Original authentication references used file RUAeTIAlYdTFPZIE4l2tmX, frames
+2024:2 and 2024:24. Those completed pages remain unchanged.
+
+## Verified frontend-only results
+
+- Production build: passed (defaults to real API mode).
+- ESLint: passed with zero warnings.
+- Vitest: 37 tests passed in eight files.
+- Browser suite in Microsoft Edge: 20 passed, nine live-backend tests explicitly
+  skipped. The six new frontend demo tests require no API/database; existing
+  login/registration browser checks also passed using their HTTP stubs.
+- All three preview screens passed responsive/accessibility checks at 1440px,
+  768px and 390px. Screenshots are under ignored `test-results/`.
+- Backend file hashes matched the snapshot from before this frontend-only task.
+  No backend tests, servers, migrations, environment edits, or dependency commands
+  were run. Earlier backend changes remain untouched for team review.
+
+See [FRONTEND_ONLY_CHANGELOG.md](FRONTEND_ONLY_CHANGELOG.md) for every frontend file
+created/modified in this task and the complete pre-existing backend change list.
